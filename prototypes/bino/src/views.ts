@@ -145,7 +145,7 @@ export function vHeader(): string {
   });
   const who = esc(firstName(Store.displayName()));
   return `<div class="hello">
-    <img class="hello-mascot" src="assets/mascot/mascot-wave.png" width="52" height="52" alt="">
+    <img class="hello-mascot" src="assets/mascot/mascot-patient-avatar.png" width="52" height="52" alt="">
     <div><div class="hello-t">${who}</div><div class="hello-d">Date : ${date}</div></div>
     <button type="button" class="hello-out" data-act="logout">Déconnexion</button>
   </div>`;
