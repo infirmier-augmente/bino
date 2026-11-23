@@ -252,6 +252,9 @@ test('la recherche et la priorité restent sur le patient choisi', async ({ page
   await page.getByRole('button', { name: 'Transmissions' }).click();
   await page.getByRole('button', { name: 'Tous' }).click();
   await expect(page.locator('#shift')).toBeVisible();
+  await expect(page.locator('#shift')).toHaveCSS('position', 'fixed');
+  const transmitDock = await page.locator('#shift').boundingBox();
+  expect(transmitDock?.height).toBeLessThan(60);
   await expect(page.getByRole('button', { name: 'Tous' })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByRole('button', { name: /M\. Durand : Priorité 2/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Mme Lefèvre : Priorité 2/ })).toBeVisible();

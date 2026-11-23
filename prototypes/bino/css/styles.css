@@ -29,8 +29,8 @@
   --radius-lg: var(--bino-radius-lg);
   --radius-xl: var(--bino-radius-lg);
   --shadow: var(--bino-shadow-soft);
-  --font-display: "Atkinson Hyperlegible", sans-serif;
-  --font-body: "Atkinson Hyperlegible", sans-serif;
+  --font-display: "Source Sans 3", sans-serif;
+  --font-body: "Source Sans 3", sans-serif;
 }
 * {
   box-sizing: border-box;

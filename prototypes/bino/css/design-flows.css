@@ -94,16 +94,17 @@ textarea.cr-box {
 }
 
 .shift-dock {
-  left: max(8px, calc((100% - 440px) / 2 + 8px));
-  right: max(8px, calc((100% - 440px) / 2 + 8px));
+  left: auto;
+  right: max(16px, calc((100% - 440px) / 2 + 16px));
   display: flex;
-  height: 68px;
+  width: max-content;
+  height: auto;
   align-items: center;
   justify-content: flex-end;
-  padding: 8px 12px;
-  border-top: 1px solid var(--bino-border);
-  background: var(--bino-surface);
-  box-shadow: 0 -4px 16px rgba(27, 61, 110, 0.04);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   pointer-events: none;
 }
 
