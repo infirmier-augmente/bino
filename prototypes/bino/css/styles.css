@@ -29,8 +29,8 @@
   --radius-lg: var(--bino-radius-lg);
   --radius-xl: var(--bino-radius-lg);
   --shadow: var(--bino-shadow-soft);
-  --font-display: "Source Sans 3", sans-serif;
-  --font-body: "Source Sans 3", sans-serif;
+  --font-display: "Inter", sans-serif;
+  --font-body: "Open Sans", sans-serif;
 }
 * {
   box-sizing: border-box;
