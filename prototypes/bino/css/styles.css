@@ -1428,11 +1428,14 @@ body {
 }
 header.top {
   display: block;
-  padding: 4px 20px;
-  padding-top: max(4px, env(safe-area-inset-top));
+  padding: 10px 20px 8px;
+  padding-top: max(10px, env(safe-area-inset-top));
   background: var(--white);
 }
 header.top[hidden] {
+  display: none;
+}
+#shift[hidden] {
   display: none;
 }
 .hello-t {

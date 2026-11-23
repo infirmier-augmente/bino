@@ -109,6 +109,7 @@ test('la liste est le service de réa, sans le service de chirurgie', async ({ p
   await expect(page.getByText('M. Durand')).toBeVisible();
   await expect(page.getByText('Mme Lefèvre')).toBeVisible();
   await expect(page.locator('.count')).toHaveText('4');
+  await expect(page.locator('#shift')).toBeHidden();
   await captureResponsive(page, testInfo.outputPath('design-patients-mobile.png'), 390, true);
   await captureResponsive(page, testInfo.outputPath('design-patients-desktop.png'), 1440, true);
   await page.setViewportSize({ width: 390, height: 844 });
@@ -250,6 +251,7 @@ test('la recherche et la priorité restent sur le patient choisi', async ({ page
   await enterWard(page);
   await page.getByRole('button', { name: 'Transmissions' }).click();
   await page.getByRole('button', { name: 'Tous' }).click();
+  await expect(page.locator('#shift')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Tous' })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByRole('button', { name: /M\. Durand : Priorité 2/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Mme Lefèvre : Priorité 2/ })).toBeVisible();

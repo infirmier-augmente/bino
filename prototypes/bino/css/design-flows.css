@@ -12,18 +12,23 @@
 .pp-steps {
   position: relative;
   z-index: 1;
-  align-items: center;
-  min-height: 66px;
+  display: block;
+  min-height: 0;
   margin: 0 0 12px;
-  padding: 10px 12px;
+  padding: 12px 16px;
   border: 1px solid var(--bino-border);
-  border-radius: var(--bino-radius-md);
+  border-radius: 18px 18px 18px 4px;
   background: var(--bino-surface);
   box-shadow: var(--bino-shadow-soft);
 }
 
 .pp-steps span {
   color: var(--bino-navy);
+  line-height: 1.5;
+}
+
+.pp-steps i {
+  font-style: italic;
 }
 
 .pp-actions {
