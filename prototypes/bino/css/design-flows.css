@@ -2,9 +2,9 @@
 
 .pp-mascot {
   display: block;
-  width: min(199px, 72%);
-  height: 102px;
-  margin: 4px auto -14px;
+  width: min(220px, 75%);
+  height: 140px;
+  margin: 0 auto -16px;
   object-fit: contain;
   object-position: center bottom;
 }

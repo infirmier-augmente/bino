@@ -109,7 +109,7 @@ const firstName = (s: string): string => s.split(/[·,]/)[0]?.trim().split(/\s+/
 
 export function vLogin(error: string, matricule: string): string {
   return `<div class="login">
-    <img class="login-mark" src="assets/mascot/mascot-login-wink.png" width="185" height="186" alt="">
+    <img class="login-mark" src="assets/mascot/mascot-login-hero.png" width="338" height="270" alt="">
     <h1>Connexion</h1>
     <p class="sub">Entre ton matricule et ton mot de passe.</p>
     <div class="card login-card">
@@ -136,7 +136,7 @@ export function vLogged(name: string): string {
 export const micBtn = (U: Ui, target: string): string =>
   `<button type="button" class="mic ${U.listening === target ? 'on' : ''}" data-act="mic" data-arg="${target}" aria-label="${U.listening === target ? 'Arrêter la dictée' : 'Dicter le compte rendu'}">${ic(U.listening === target ? 'stop' : 'mic', 28)}</button>`;
 
-/* ---------- en-tête : logo + Bonjour + date (maquette 1), page Patients seulement ---------- */
+/* ---------- en-tête : mascotte + Bonjour + date, page Patients seulement ---------- */
 export function vHeader(): string {
   const date = new Date().toLocaleDateString('fr-FR', {
     day: '2-digit',
@@ -145,7 +145,7 @@ export function vHeader(): string {
   });
   const who = esc(firstName(Store.displayName()));
   return `<div class="hello">
-    <img class="hello-logo" src="assets/brand/app-icon-selected-original.png" width="52" height="52" alt="Bino">
+    <img class="hello-mascot" src="assets/mascot/mascot-wave.png" width="52" height="52" alt="">
     <div><div class="hello-t">${who}</div><div class="hello-d">Date : ${date}</div></div>
     <button type="button" class="hello-out" data-act="logout">Déconnexion</button>
   </div>`;
@@ -240,7 +240,7 @@ export function vPatientPopup(S: Ward, U: Ui, examples: Example[]): string {
   <h1 class="pp-title">Nouveau compte rendu</h1>
   <div class="pp-name">${esc(p.nom)}</div>
   <div class="pp-sub">Chambre ${esc(p.ch)} · ${p.age} ans</div>
-  <img class="pp-mascot" src="assets/mascot/mascot-report-encouraging.png" width="199" height="119" alt="">
+  <img class="pp-mascot" src="assets/mascot/mascot-login-hero.png" width="338" height="270" alt="">
   <p class="pp-steps"><img class="hint-bino" src="assets/mascot/mascot-patient-avatar.png" width="40" height="40" alt=""><span>Dicte ou écris, puis valide. <br>Tu retrouveras ton compte-rendu <br>soigneusement rangé dans <b>Mes CR</b>.</span></p>
 
   <div class="pp-actions">

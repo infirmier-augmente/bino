@@ -26,6 +26,19 @@ async function waitForImages(page: Page) {
   expect(loaded.every(Boolean)).toBe(true);
 }
 
+async function captureResponsive(page: Page, path: string, width: number, fullPage = false) {
+  await page.setViewportSize({ width, height: width > 600 ? 900 : 844 });
+  const dimensions = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    content: document.documentElement.scrollWidth,
+    shell: document.querySelector('.shell')?.getBoundingClientRect().width ?? 0,
+  }));
+  expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+  if (width > 600) expect(dimensions.shell).toBeLessThanOrEqual(440);
+  await waitForImages(page);
+  await page.screenshot({ path, fullPage });
+}
+
 test('un mauvais mot de passe reste sur la connexion', async ({ page }) => {
   await login(page, '10482', 'autre');
   await expect(page.getByText('Matricule ou mot de passe incorrect.')).toBeVisible();
@@ -96,11 +109,9 @@ test('la liste est le service de réa, sans le service de chirurgie', async ({ p
   await expect(page.getByText('M. Durand')).toBeVisible();
   await expect(page.getByText('Mme Lefèvre')).toBeVisible();
   await expect(page.locator('.count')).toHaveText('4');
-  await waitForImages(page);
-  await page.screenshot({
-    path: testInfo.outputPath('design-patients-mobile.png'),
-    fullPage: true,
-  });
+  await captureResponsive(page, testInfo.outputPath('design-patients-mobile.png'), 390, true);
+  await captureResponsive(page, testInfo.outputPath('design-patients-desktop.png'), 1440, true);
+  await page.setViewportSize({ width: 390, height: 844 });
   for (const name of SURGERY) await expect(page.getByText(name)).toHaveCount(0);
 });
 
@@ -109,11 +120,9 @@ test('le dossier ne invente pas de constantes', async ({ page }, testInfo) => {
   await enterWard(page);
   await page.getByRole('button', { name: /Mme Bernard/ }).click();
   await expect(page.getByRole('heading', { name: 'Nouveau compte rendu' })).toBeVisible();
-  await waitForImages(page);
-  await page.screenshot({
-    path: testInfo.outputPath('design-new-report-mobile.png'),
-    fullPage: true,
-  });
+  await captureResponsive(page, testInfo.outputPath('design-new-report-mobile.png'), 390, true);
+  await captureResponsive(page, testInfo.outputPath('design-new-report-desktop.png'), 1440, true);
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: 'Dossier médical' }).click();
   await expect(page.getByText('Constantes non fournies par le service.')).toBeVisible();
 });
@@ -246,10 +255,9 @@ test('la recherche et la priorité restent sur le patient choisi', async ({ page
   await expect(page.getByRole('button', { name: /Mme Lefèvre : Priorité 2/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Mme Bernard : Priorité 3/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /M\. Nguyen : Priorité 4/ })).toBeVisible();
-  await waitForImages(page);
-  await page.screenshot({
-    path: testInfo.outputPath('design-transmissions-mobile.png'),
-  });
+  await captureResponsive(page, testInfo.outputPath('design-transmissions-mobile.png'), 390);
+  await captureResponsive(page, testInfo.outputPath('design-transmissions-desktop.png'), 1440);
+  await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByText('Pneumopathie hypoxémique')).toBeVisible();
   await expect(page.getByText('Hémorragie méningée sur anévrisme')).toBeVisible();
   await page.getByLabel('Rechercher un patient').fill('Patient introuvable');
@@ -285,10 +293,9 @@ test('la relève reste en attente jusqu’au retour serveur, puis affiche le suc
   });
   await page.getByRole('button', { name: 'Transmettre' }).click();
   await expect(page.getByText('Valider la transmission ?')).toBeVisible();
-  await waitForImages(page);
-  await page.screenshot({
-    path: testInfo.outputPath('design-confirmation-mobile.png'),
-  });
+  await captureResponsive(page, testInfo.outputPath('design-confirmation-mobile.png'), 390);
+  await captureResponsive(page, testInfo.outputPath('design-confirmation-desktop.png'), 1440);
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: 'Confirmer' }).click();
   await expect(page.getByRole('button', { name: 'Validation…' })).toBeDisabled();
   await expect.poll(() => posts).toBeGreaterThan(0);
@@ -297,10 +304,9 @@ test('la relève reste en attente jusqu’au retour serveur, puis affiche le suc
   release();
   await expect(page.getByText('Transmission validée !')).toBeVisible();
   await expect(page.getByRole('button', { name: 'OK' })).toBeVisible();
-  await waitForImages(page);
-  await page.screenshot({
-    path: testInfo.outputPath('design-success-mobile.png'),
-  });
+  await captureResponsive(page, testInfo.outputPath('design-success-mobile.png'), 390);
+  await captureResponsive(page, testInfo.outputPath('design-success-desktop.png'), 1440);
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: 'OK' }).click();
   await expect(page.getByText('Transmission validée !')).toHaveCount(0);
 });
