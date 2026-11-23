@@ -26,6 +26,7 @@ import {
   vPatientPopup,
   vPatients,
   vShiftAsk,
+  vShiftSuccess,
   vTransmissions,
 } from './views.js';
 
@@ -56,6 +57,7 @@ const U: Ui = {
   justIn: false,
 };
 let docModel: DocModel | null = null;
+let shiftSaving = false;
 const P = (id: string): Patient | undefined => S.patients.find((p) => p.id === id);
 const signedIn = (): boolean => !!settings.matricule;
 
@@ -197,6 +199,9 @@ function closePatient(): void {
 }
 
 let doneTimer: ReturnType<typeof setTimeout> | undefined;
+const DONE_MASCOT: Readonly<Record<string, string>> = {
+  content: 'assets/mascot/mascot-report-encouraging.png',
+};
 function hideDone(): void {
   clearTimeout(doneTimer);
   const el = document.getElementById('done');
@@ -210,7 +215,8 @@ function setDoneStatus(status: string, mood?: string): void {
   const el = document.getElementById('save-status');
   if (el) el.textContent = status;
   const face = document.getElementById('done-bino');
-  if (face instanceof HTMLImageElement && mood) face.src = `assets/bino/${mood}-bust.png`;
+  const mascot = mood ? DONE_MASCOT[mood] : undefined;
+  if (face instanceof HTMLImageElement && mascot) face.src = mascot;
 }
 function scheduleDoneClose(ms: number): void {
   clearTimeout(doneTimer);
@@ -511,14 +517,14 @@ function refreshMic(): void {
 /* ---------- actions ---------- */
 let tt: ReturnType<typeof setTimeout> | undefined;
 const TOAST_FACE = {
-  content: 'content-head',
-  alerte: 'alerte-head',
-  neutre: 'clin-oeil-head',
+  content: 'mascot-report-encouraging.png',
+  alerte: 'mascot-surprised.png',
+  neutre: 'mascot-login-wink.png',
 } as const;
 function toast(m: string, mood: keyof typeof TOAST_FACE = 'neutre'): void {
   const t = must('toast');
   const face = TOAST_FACE[mood];
-  t.innerHTML = `<div class="toast"><img class="toast-bino" src="assets/bino/${face}.png" alt="">${esc(m)}</div>`;
+  t.innerHTML = `<div class="toast"><img class="toast-bino" src="assets/mascot/${face}" alt="">${esc(m)}</div>`;
   clearTimeout(tt);
   tt = setTimeout(() => {
     t.innerHTML = '';
@@ -559,12 +565,27 @@ const A: Record<string, Act> = {
     U.justIn = true;
     render();
   },
+  togglePassword: () => {
+    const password = document.getElementById('login-pw');
+    const toggle = document.querySelector('[data-act="togglePassword"]');
+    if (!(password instanceof HTMLInputElement) || !(toggle instanceof HTMLButtonElement)) return;
+    const visible = password.type === 'password';
+    password.type = visible ? 'text' : 'password';
+    toggle.setAttribute(
+      'aria-label',
+      visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe',
+    );
+    toggle.setAttribute('aria-pressed', String(visible));
+    toggle.innerHTML = ic(visible ? 'eyeOff' : 'eye', 20);
+    password.focus({ preventScroll: true });
+  },
   enter: () => {
     U.justIn = false;
     render();
     Store.refresh().catch(() => {});
   },
   logout: () => {
+    shiftSaving = false;
     if (U.listening) Voice.stop();
     U.listening = null;
     U.capture = null;
@@ -634,21 +655,38 @@ const A: Record<string, Act> = {
   },
   saveCr: () => saveCr(),
   askShift: () => {
+    shiftSaving = false;
     must('done').innerHTML = vShiftAsk();
   },
   cancelShift: (_a, el, e) => {
+    if (shiftSaving) return;
     if (!el || !e) return;
     if (el.classList.contains('done-wrap') && e.target !== el) return;
     must('done').innerHTML = '';
   },
   confirmShift: async () => {
-    must('done').innerHTML = '';
+    if (shiftSaving) return;
+    shiftSaving = true;
+    must('done').innerHTML = vShiftAsk(true);
     try {
-      await Store.reviewMine();
-      toast('Transmission validée.', 'content');
+      const reviewed = await Store.reviewMine();
+      if (!reviewed) {
+        shiftSaving = false;
+        must('done').innerHTML = vShiftAsk(false, 'Aucun compte rendu en attente de validation.');
+        return;
+      }
+      shiftSaving = false;
+      must('done').innerHTML = vShiftSuccess();
+      document.querySelector<HTMLButtonElement>('[data-act="closeShiftSuccess"]')?.focus({
+        preventScroll: true,
+      });
     } catch {
-      toast('Validation impossible pour le moment.', 'alerte');
+      shiftSaving = false;
+      must('done').innerHTML = vShiftAsk(false, 'Validation impossible pour le moment.');
     }
+  },
+  closeShiftSuccess: () => {
+    must('done').innerHTML = '';
   },
 
   trScope: (a) => {
@@ -774,8 +812,9 @@ document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   const done = document.getElementById('done');
   const sheetEl = document.getElementById('sheet');
-  if (done?.innerHTML) done.innerHTML = '';
-  else if (document.querySelector('details.menu[open]')) {
+  if (done?.innerHTML) {
+    if (!shiftSaving) done.innerHTML = '';
+  } else if (document.querySelector('details.menu[open]')) {
     for (const d of document.querySelectorAll('details.menu[open]')) {
       if (d instanceof HTMLDetailsElement) d.open = false;
     }

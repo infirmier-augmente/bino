@@ -1,0 +1,21 @@
+/* Bino design tokens — derived from the approved mockup reference. */
+:root {
+  --bino-navy: #08264b;
+  --bino-pink: #ff0068;
+  --bino-pink-dark: #e9005d;
+  --bino-blue: #55b8f5;
+  --bino-blue-soft: #e5f4ff;
+  --bino-orange: #ff8500;
+  --bino-green: #159653;
+  --bino-text: #08264b;
+  --bino-muted: #626b78;
+  --bino-border: #dce4ef;
+  --bino-surface: #ffffff;
+  --bino-background: #f2f6ff;
+  --bino-radius-sm: 12px;
+  --bino-radius-md: 18px;
+  --bino-radius-lg: 26px;
+  --bino-radius-pill: 999px;
+  --bino-shadow-card: 0 8px 24px rgba(27, 61, 110, 0.1);
+  --bino-shadow-soft: 0 3px 12px rgba(27, 61, 110, 0.07);
+}

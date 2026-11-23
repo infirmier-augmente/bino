@@ -31,6 +31,9 @@ const I = {
   spark:
     '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',
   folder: '<path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>',
+  eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+  eyeOff:
+    '<path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A11.6 11.6 0 0 1 12 5c6.4 0 10 7 10 7a13.8 13.8 0 0 1-3 3.8M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7c1 0 1.9-.2 2.8-.5"/>',
 };
 export const ic = (n: keyof typeof I, s = 20): string =>
   `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
@@ -106,24 +109,24 @@ const firstName = (s: string): string => s.split(/[·,]/)[0]?.trim().split(/\s+/
 
 export function vLogin(error: string, matricule: string): string {
   return `<div class="login">
-    <img class="login-mark" src="assets/bino/presente-bust.png" width="106" height="128" alt="">
+    <img class="login-mark" src="assets/mascot/mascot-login-wink.png" width="185" height="186" alt="">
     <h1>Connexion</h1>
     <p class="sub">Entre ton matricule et ton mot de passe.</p>
     <div class="card login-card">
       <label class="l" for="login-id">Matricule</label>
       <input class="f" id="login-id" inputmode="numeric" autocomplete="username" placeholder="10482" value="${esc(matricule || '')}">
       <label class="l" for="login-pw">Mot de passe</label>
-      <input class="f" id="login-pw" type="password" autocomplete="current-password" placeholder="bino">
+      <div class="password-field"><input class="f" id="login-pw" type="password" autocomplete="current-password" placeholder="bino"><button type="button" class="password-toggle" data-act="togglePassword" aria-label="Afficher le mot de passe" aria-pressed="false">${ic('eye', 20)}</button></div>
       ${error ? `<p class="login-err" role="alert">${esc(error)}</p>` : ''}
       <button type="button" class="btn" data-act="login">Se connecter</button>
     </div>
-    <p class="small muted login-hint">Demo</p>
+    <p class="small muted login-hint">Démo</p>
   </div>`;
 }
 
 export function vLogged(name: string): string {
   return `<div class="login logged">
-    <img class="login-mark" src="assets/bino/pouce-bust.png" width="116" height="128" alt="">
+    <img class="login-mark" src="assets/mascot/mascot-success-celebrating.png" width="116" height="128" alt="">
     <h1>${esc(name)}</h1>
     <p class="sub">Connexion réussie</p>
     <button type="button" class="btn" data-act="enter">Continuer</button>
@@ -142,7 +145,7 @@ export function vHeader(): string {
   });
   const who = esc(firstName(Store.displayName()));
   return `<div class="hello">
-    <img class="hello-logo" src="assets/bino/salue-bust.png" width="52" height="52" alt="">
+    <img class="hello-logo" src="assets/brand/app-icon-selected-original.png" width="52" height="52" alt="Bino">
     <div><div class="hello-t">${who}</div><div class="hello-d">Date : ${date}</div></div>
     <button type="button" class="hello-out" data-act="logout">Déconnexion</button>
   </div>`;
@@ -237,7 +240,8 @@ export function vPatientPopup(S: Ward, U: Ui, examples: Example[]): string {
   <h1 class="pp-title">Nouveau compte rendu</h1>
   <div class="pp-name">${esc(p.nom)}</div>
   <div class="pp-sub">Chambre ${esc(p.ch)} · ${p.age} ans</div>
-  <p class="pp-steps"><img class="hint-bino" src="assets/bino/clin-oeil-head.png" width="40" height="40" alt=""><span>Dicte ou écris, puis valide. <br>Tu retrouveras ton compte-rendu <br>soigneusement rangé dans <b>Mes CR</b>.</span></p>
+  <img class="pp-mascot" src="assets/mascot/mascot-report-encouraging.png" width="199" height="119" alt="">
+  <p class="pp-steps"><img class="hint-bino" src="assets/mascot/mascot-patient-avatar.png" width="40" height="40" alt=""><span>Dicte ou écris, puis valide. <br>Tu retrouveras ton compte-rendu <br>soigneusement rangé dans <b>Mes CR</b>.</span></p>
 
   <div class="pp-actions">
     <button type="button" class="pill ${U.foldOpen ? 'on' : ''}" data-act="toggleDossier" aria-expanded="${U.foldOpen}">${ic('folder', 18)} Dossier médical ${ic('chev', 16)}</button>
@@ -277,11 +281,14 @@ const waitingDots =
 
 export const vDone = (title = 'Compte rendu fait', status = ''): string => {
   const line = status === 'Rangement en cours.' ? `Rangement en cours${waitingDots}` : esc(status);
-  return `<div class="done-wrap done-note"><button type="button" class="done-backdrop" data-act="closeDone" aria-label="Fermer"></button><div class="done-card" role="dialog" aria-modal="true" aria-labelledby="done-t"><button type="button" class="icon-btn done-x" data-act="closeDone" aria-label="Fermer">${ic('x', 22)}</button><img class="done-bino" id="done-bino" src="assets/bino/concentre-bust.png" width="120" height="108" alt=""><div class="done-t" id="done-t">${esc(title)}</div><p class="done-status" id="save-status">${line}</p><button type="button" class="btn sec sm done-go" data-act="seeTransmissions">Voir Mes CR</button></div></div>`;
+  return `<div class="done-wrap done-note"><button type="button" class="done-backdrop" data-act="closeDone" aria-label="Fermer"></button><div class="done-card" role="dialog" aria-modal="true" aria-labelledby="done-t"><button type="button" class="icon-btn done-x" data-act="closeDone" aria-label="Fermer">${ic('x', 22)}</button><img class="done-bino" id="done-bino" src="assets/mascot/mascot-report-encouraging.png" width="120" height="108" alt=""><div class="done-t" id="done-t">${esc(title)}</div><p class="done-status" id="save-status">${line}</p><button type="button" class="btn sec sm done-go" data-act="seeTransmissions">Voir Mes CR</button></div></div>`;
 };
 
-export const vShiftAsk = (): string =>
-  `<div class="done-wrap" data-act="cancelShift"><div class="done-card shift-ask" role="dialog" aria-modal="true" aria-labelledby="shift-t"><img class="shift-mascot" src="assets/bino/endormi-bust.png" width="142" height="128" alt=""><div class="done-t" id="shift-t">Valider la transmission ?</div><div class="shift-actions"><button type="button" class="btn sec" data-act="cancelShift">Annuler</button><button type="button" class="btn" data-act="confirmShift">Confirmer</button></div></div></div>`;
+export const vShiftAsk = (busy = false, error = ''): string =>
+  `<div class="done-wrap" data-act="cancelShift"><div class="done-card shift-ask" role="dialog" aria-modal="true" aria-labelledby="shift-t" aria-busy="${busy}"><img class="shift-mascot" src="assets/mascot/mascot-confirm-gentle.png" width="153" height="128" alt=""><div class="done-t" id="shift-t">Valider la transmission ?</div>${error ? `<p class="shift-error" role="alert">${esc(error)}</p>` : ''}<div class="shift-actions"><button type="button" class="btn sec" data-act="cancelShift" ${busy ? 'disabled' : ''}>Annuler</button><button type="button" class="btn" data-act="confirmShift" ${busy ? 'disabled' : ''}>${busy ? '<span class="spin"></span> Validation…' : 'Confirmer'}</button></div></div></div>`;
+
+export const vShiftSuccess = (): string =>
+  `<div class="done-wrap shift-success-wrap"><div class="done-card shift-success" role="dialog" aria-modal="true" aria-labelledby="shift-success-title"><img class="shift-success-mascot" src="assets/mascot/mascot-success-celebrating.png" width="189" height="130" alt=""><div class="done-t" id="shift-success-title">Transmission validée !</div><p class="done-status">Le compte-rendu a été transmis.</p><button type="button" class="btn" data-act="closeShiftSuccess">OK</button></div></div>`;
 
 /* ---------- onglet 2 : transmissions ---------- */
 function crItem(c: Cr, S: Ward): string {
@@ -391,7 +398,7 @@ export function vTransmissions(S: Ward, U: Ui): string {
       .filter((c) => Store.isMine(c))
       .sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
     return `${head}
-    ${mine.length ? `<div class="card cr-list">${mine.map((c) => crItem(c, S)).join('')}</div>` : '<div class="card empty bino-empty"><img src="assets/bino/salue-bust.png" width="84" height="84" alt=""><p>Pas encore de compte rendu. Touche un patient dans l\'onglet Patients.</p></div>'}`;
+    ${mine.length ? `<div class="card cr-list">${mine.map((c) => crItem(c, S)).join('')}</div>` : '<div class="card empty bino-empty"><img src="assets/mascot/mascot-wave.png" width="84" height="84" alt=""><p>Pas encore de compte rendu. Touche un patient dans l\'onglet Patients.</p></div>'}`;
   }
   if (Store.isLoading()) return `${head}<p class="note">Chargement…</p>`;
   const q = (U.trQuery || '').trim();

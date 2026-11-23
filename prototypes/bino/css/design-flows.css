@@ -1,0 +1,227 @@
+/* Fiche de soin, modales de relève et ajustements responsive. */
+
+.pp-mascot {
+  display: block;
+  width: min(199px, 72%);
+  height: 102px;
+  margin: 4px auto -14px;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.pp-steps {
+  position: relative;
+  z-index: 1;
+  align-items: center;
+  min-height: 66px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--bino-border);
+  border-radius: var(--bino-radius-md);
+  background: var(--bino-surface);
+  box-shadow: var(--bino-shadow-soft);
+}
+
+.pp-steps span {
+  color: var(--bino-navy);
+}
+
+.pp-actions {
+  margin-top: 10px;
+}
+
+.pill {
+  border-color: #b8cbe3;
+  border-radius: var(--bino-radius-pill);
+  color: var(--bino-navy);
+  background: var(--bino-surface);
+}
+
+.pill.on {
+  border-color: var(--bino-pink);
+  background: var(--bino-pink);
+}
+
+.dossier-body {
+  border-radius: var(--bino-radius-md);
+}
+
+.cr-zone {
+  padding: 12px;
+  border: 1px solid var(--bino-border);
+  border-radius: 22px;
+  background: var(--bino-surface);
+  box-shadow: var(--bino-shadow-soft);
+}
+
+textarea.cr-box {
+  border-color: #c6d5e9;
+  border-radius: 16px;
+  background: var(--bino-surface);
+}
+
+.pp-mic .mic {
+  width: 78px;
+  height: 78px;
+  background: var(--bino-pink);
+  box-shadow: 0 6px 16px rgba(255, 0, 104, 0.18);
+}
+
+.pp-mic .mic:hover,
+.pp-mic .mic.on {
+  background: var(--bino-pink-dark);
+}
+
+.pp-foot {
+  background: var(--bino-surface);
+  border-color: var(--bino-border);
+}
+
+.pp-foot .btn.valider {
+  min-height: 52px;
+  border-radius: 16px;
+}
+
+.shift-btn {
+  border-radius: var(--bino-radius-md);
+  background: var(--bino-green);
+  box-shadow: 0 6px 16px rgba(27, 61, 110, 0.18);
+}
+
+.shift-dock {
+  left: max(8px, calc((100% - 440px) / 2 + 8px));
+  right: max(8px, calc((100% - 440px) / 2 + 8px));
+  display: flex;
+  height: 68px;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8px 12px;
+  border-top: 1px solid var(--bino-border);
+  background: var(--bino-surface);
+  box-shadow: 0 -4px 16px rgba(27, 61, 110, 0.04);
+  pointer-events: none;
+}
+
+.shift-dock .shift-btn {
+  pointer-events: auto;
+}
+
+.shift-btn:hover {
+  background: #117c45;
+}
+
+.done-card {
+  border: 1px solid var(--bino-border);
+  border-radius: var(--bino-radius-lg);
+  box-shadow: var(--bino-shadow-card);
+}
+
+.shift-ask,
+.shift-success {
+  width: min(380px, 100%);
+  padding: 24px 22px;
+}
+
+.shift-mascot,
+.shift-success-mascot {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 126px;
+  margin: 0 auto 14px;
+  object-fit: contain;
+}
+
+.shift-ask .done-t,
+.shift-success .done-t {
+  margin: 0;
+  line-height: 1.25;
+}
+
+.shift-actions {
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.shift-error {
+  margin: 12px 0 -8px;
+  color: #b42318;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.shift-actions .btn {
+  min-height: 50px;
+  border-radius: 14px;
+}
+
+.shift-actions .btn.sec {
+  border-color: #b8cbe3;
+}
+
+.shift-success-mascot {
+  height: 130px;
+}
+
+.shift-success .done-status {
+  margin-top: 8px;
+  font-size: 15px;
+}
+
+.shift-success .btn {
+  width: 100%;
+  min-height: 50px;
+  margin-top: 18px;
+  border-radius: 14px;
+}
+
+nav.tabs {
+  bottom: 8px;
+  width: calc(100% - 16px);
+  border-color: var(--bino-border);
+  border-radius: 0 0 var(--bino-radius-lg) var(--bino-radius-lg);
+  background: var(--bino-surface);
+  box-shadow: 0 -4px 16px rgba(27, 61, 110, 0.04);
+}
+
+nav.tabs button {
+  height: 58px;
+}
+
+nav.tabs button.on {
+  color: var(--bino-pink);
+}
+
+.toast {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  box-shadow: var(--bino-shadow-card);
+}
+
+@media (min-width: 600px) {
+  .shell {
+    width: min(calc(100% - 40px), 440px);
+    min-height: calc(100vh - 40px);
+    margin: 20px auto;
+  }
+
+  nav.tabs {
+    bottom: 20px;
+    width: min(calc(100% - 40px), 440px);
+  }
+}
+
+@media (max-height: 700px) {
+  .login {
+    justify-content: flex-start;
+    padding-top: 16px;
+  }
+
+  .login-mark {
+    height: 112px;
+  }
+
+  .pp-mascot {
+    height: 78px;
+  }
+}

@@ -120,9 +120,16 @@ export async function addCr(pid: string, text: string): Promise<void> {
   }
 }
 
-export async function reviewMine(): Promise<void> {
-  await Bino.reviewMine(cache.cr, settings.matricule);
-  await refreshBino();
+export async function reviewMine(): Promise<number> {
+  const reviewed = await Bino.reviewMine(cache.cr, settings.matricule);
+  try {
+    await refreshBino();
+  } catch {
+    stale = true;
+    loading = false;
+    emit();
+  }
+  return reviewed;
 }
 
 export async function setManualLevel(pid: string, level: Level | null): Promise<void> {

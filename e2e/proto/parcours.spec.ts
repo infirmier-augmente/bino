@@ -18,13 +18,61 @@ async function enterWard(page: Page) {
   await expect(page.getByText('Mme Bernard')).toBeVisible();
 }
 
+async function waitForImages(page: Page) {
+  const loaded = await page.evaluate(async () => {
+    await Promise.all(Array.from(document.images, (image) => image.decode().catch(() => {})));
+    return Array.from(document.images, (image) => image.complete && image.naturalWidth > 0);
+  });
+  expect(loaded.every(Boolean)).toBe(true);
+}
+
 test('un mauvais mot de passe reste sur la connexion', async ({ page }) => {
   await login(page, '10482', 'autre');
   await expect(page.getByText('Matricule ou mot de passe incorrect.')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Connexion' })).toBeVisible();
 });
 
-test('la liste est le service de réa, sans le service de chirurgie', async ({ page }) => {
+test('le mot de passe peut être affiché puis masqué', async ({ page }) => {
+  await page.goto('/');
+  const password = page.locator('#login-pw');
+  await expect(password).toHaveAttribute('type', 'password');
+  await page.getByRole('button', { name: 'Afficher le mot de passe' }).click();
+  await expect(password).toHaveAttribute('type', 'text');
+  await expect(page.getByRole('button', { name: 'Masquer le mot de passe' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await page.getByRole('button', { name: 'Masquer le mot de passe' }).click();
+  await expect(password).toHaveAttribute('type', 'password');
+});
+
+test('la connexion reste sans débordement sur mobile et desktop', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 1440, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    const dimensions = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      content: document.documentElement.scrollWidth,
+      shell: document.querySelector('.shell')?.getBoundingClientRect().width ?? 0,
+    }));
+    expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+    if (viewport.width > 600) expect(dimensions.shell).toBeLessThanOrEqual(440);
+    await waitForImages(page);
+    await page.screenshot({
+      path: testInfo.outputPath(
+        viewport.width === 390 ? 'design-login-mobile.png' : 'design-login-desktop.png',
+      ),
+      fullPage: true,
+    });
+  }
+});
+
+test('la liste est le service de réa, sans le service de chirurgie', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   let release = () => {};
   const gate = new Promise<void>((resolve) => {
     release = resolve;
@@ -48,12 +96,24 @@ test('la liste est le service de réa, sans le service de chirurgie', async ({ p
   await expect(page.getByText('M. Durand')).toBeVisible();
   await expect(page.getByText('Mme Lefèvre')).toBeVisible();
   await expect(page.locator('.count')).toHaveText('4');
+  await waitForImages(page);
+  await page.screenshot({
+    path: testInfo.outputPath('design-patients-mobile.png'),
+    fullPage: true,
+  });
   for (const name of SURGERY) await expect(page.getByText(name)).toHaveCount(0);
 });
 
-test('le dossier ne invente pas de constantes', async ({ page }) => {
+test('le dossier ne invente pas de constantes', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await enterWard(page);
   await page.getByRole('button', { name: /Mme Bernard/ }).click();
+  await expect(page.getByRole('heading', { name: 'Nouveau compte rendu' })).toBeVisible();
+  await waitForImages(page);
+  await page.screenshot({
+    path: testInfo.outputPath('design-new-report-mobile.png'),
+    fullPage: true,
+  });
   await page.getByRole('button', { name: 'Dossier médical' }).click();
   await expect(page.getByText('Constantes non fournies par le service.')).toBeVisible();
 });
@@ -149,8 +209,10 @@ test('sur ordinateur le micro envoie l’audio et écrit le texte', async ({ pag
   await page.getByRole('button', { name: /M\. Nguyen/ }).click();
   await page.getByRole('button', { name: 'Dicter le compte rendu' }).click();
   await expect(page.getByText('Écoute…')).toBeVisible();
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(800);
+  const transcription = page.waitForResponse('**/api/bino/transcriptions');
   await page.getByRole('button', { name: 'Arrêter la dictée' }).click();
+  await transcription;
   await expect(page.locator('#draft')).toHaveValue('Le pansement est sec.');
 });
 
@@ -174,16 +236,24 @@ test('le conseil de dictée garde Mes CR dans la phrase', async ({ page }) => {
   expect(boldBox.x + boldBox.width).toBeLessThanOrEqual(sentenceBox.x + sentenceBox.width + 1);
 });
 
-test('la recherche et la priorité restent sur le patient choisi', async ({ page }) => {
+test('la recherche et la priorité restent sur le patient choisi', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await enterWard(page);
   await page.getByRole('button', { name: 'Transmissions' }).click();
   await page.getByRole('button', { name: 'Tous' }).click();
+  await expect(page.getByRole('button', { name: 'Tous' })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByRole('button', { name: /M\. Durand : Priorité 2/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Mme Lefèvre : Priorité 2/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Mme Bernard : Priorité 3/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /M\. Nguyen : Priorité 4/ })).toBeVisible();
+  await waitForImages(page);
+  await page.screenshot({
+    path: testInfo.outputPath('design-transmissions-mobile.png'),
+  });
   await expect(page.getByText('Pneumopathie hypoxémique')).toBeVisible();
   await expect(page.getByText('Hémorragie méningée sur anévrisme')).toBeVisible();
+  await page.getByLabel('Rechercher un patient').fill('Patient introuvable');
+  await expect(page.getByText('Aucun patient pour cette recherche.')).toBeVisible();
   await page.getByLabel('Rechercher un patient').fill('Bernard');
   await expect(page.getByText('Mme Bernard')).toBeVisible();
   await expect(page.getByText('M. Durand')).toHaveCount(0);
@@ -192,11 +262,66 @@ test('la recherche et la priorité restent sur le patient choisi', async ({ page
   await expect(page.getByRole('button', { name: /Mme Bernard : Priorité 1/ })).toBeVisible();
 });
 
-test('confirmer la relève affiche la validation', async ({ page }) => {
+test('la relève reste en attente jusqu’au retour serveur, puis affiche le succès', async ({
+  page,
+}, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await enterWard(page);
+  await page.getByRole('button', { name: /M\. Nguyen/ }).click();
+  await page.locator('#draft').fill('Repère bino 7742, le pansement est sec.');
+  await page.getByRole('button', { name: 'Valider' }).click();
+  await expect(page.getByText('Compte rendu fait')).toBeVisible();
   await page.getByRole('button', { name: 'Transmissions' }).click();
+
+  let release = () => {};
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let posts = 0;
+  await page.route('**/api/bino/transmissions/*/review', async (route) => {
+    posts++;
+    await gate;
+    await route.continue();
+  });
   await page.getByRole('button', { name: 'Transmettre' }).click();
   await expect(page.getByText('Valider la transmission ?')).toBeVisible();
+  await waitForImages(page);
+  await page.screenshot({
+    path: testInfo.outputPath('design-confirmation-mobile.png'),
+  });
   await page.getByRole('button', { name: 'Confirmer' }).click();
-  await expect(page.getByText('Transmission validée.')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Validation…' })).toBeDisabled();
+  await expect.poll(() => posts).toBeGreaterThan(0);
+  await expect(page.getByText('Transmission validée !')).toHaveCount(0);
+
+  release();
+  await expect(page.getByText('Transmission validée !')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'OK' })).toBeVisible();
+  await waitForImages(page);
+  await page.screenshot({
+    path: testInfo.outputPath('design-success-mobile.png'),
+  });
+  await page.getByRole('button', { name: 'OK' }).click();
+  await expect(page.getByText('Transmission validée !')).toHaveCount(0);
+});
+
+test('un échec serveur ne montre pas le succès et laisse réessayer', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await enterWard(page);
+  await page.getByRole('button', { name: /M\. Nguyen/ }).click();
+  await page.locator('#draft').fill('Repère bino 7758, le pansement est sec.');
+  await page.getByRole('button', { name: 'Valider' }).click();
+  await expect(page.getByText('Compte rendu fait')).toBeVisible();
+  await page.getByRole('button', { name: 'Transmissions' }).click();
+  await page.route('**/api/bino/transmissions/*/review', (route) =>
+    route.fulfill({
+      status: 503,
+      json: { error: { code: 'service_unavailable', message: 'Service indisponible.' } },
+    }),
+  );
+  await page.getByRole('button', { name: 'Transmettre' }).click();
+  await page.getByRole('button', { name: 'Confirmer' }).click();
+  await expect(page.getByText('Validation impossible pour le moment.')).toBeVisible();
+  await expect(page.getByText('Valider la transmission ?')).toBeVisible();
+  await expect(page.getByText('Transmission validée !')).toHaveCount(0);
 });

@@ -8,6 +8,15 @@ Le détail de chaque écran, des règles (priorités, NEWS2, zéro information i
 
 > **Données entièrement fictives.** Ne jamais saisir de données réelles de patients : la démo n'est ni hébergée HDS ni conforme RGPD pour des données de santé.
 
+## Aperçu du design
+
+Direction approuvée : fond bleu pâle, surfaces blanches, titres navy, actions rose vif et mascotte Bino.
+Le logo d’application est l’image sélectionnée du produit, distincte de la mascotte.
+
+![Planche complète des écrans Bino](assets/design/bino-final-mockup-board.png)
+
+Captures de référence : [connexion](assets/design/screens/01-login.png) · [patients](assets/design/screens/02-patients.png) · [transmissions](assets/design/screens/03-transmissions.png) · [nouveau compte rendu](assets/design/screens/04-new-report.png) · [confirmation](assets/design/screens/05-confirm-transmission.png) · [succès](assets/design/screens/06-transmission-success.png).
+
 ---
 
 ## Tester en 30 secondes
@@ -77,14 +86,21 @@ Dans Claude, pour que l'équipe puisse écrire, partagez le lien en **Contribute
 
 ## Lancer en local
 
-Il faut un petit serveur web (les modules JavaScript ne marchent pas en ouvrant le fichier directement).
+Depuis la racine du dépôt, démarre l'API et le site dans deux terminaux. Le site sert les assets
+statiques et transmet ses appels à l'API locale ; ouvrir `index.html` directement ne suffit pas.
 
 ```bash
-cd prototypes/bino
-npm start                    # http://localhost:8080
-# ou, sans Node :
-python3 -m http.server 8080
+pnpm install
+pnpm dev:api                  # terminal 1 · API sur http://localhost:8787
 ```
+
+Dans un second terminal, toujours depuis la racine :
+
+```bash
+pnpm dev:web                  # terminal 2 · site sur http://localhost:8080
+```
+
+Ouvre <http://localhost:8080>. Pour arrêter les serveurs, fais `Ctrl+C` dans chaque terminal.
 
 Pour tester sur un téléphone du même Wi-Fi : `http://<IP-de-votre-ordinateur>:8080`. La dictée vocale du navigateur demande HTTPS : utilisez plutôt le lien de démo.
 

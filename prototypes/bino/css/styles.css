@@ -1,13 +1,13 @@
 :root {
-  --navy: #002244;
-  --magenta: #ff0066;
-  --magenta-press: #d6005a;
-  --sky: #5bb8f0;
-  --sky-l: rgba(91, 184, 240, 0.18);
-  --white: #ffffff;
-  --bg: #f3f3f3;
-  --sec: #5f5f5f;
-  --line: rgba(0, 34, 68, 0.1);
+  --navy: var(--bino-navy);
+  --magenta: var(--bino-pink);
+  --magenta-press: var(--bino-pink-dark);
+  --sky: var(--bino-blue);
+  --sky-l: var(--bino-blue-soft);
+  --white: var(--bino-surface);
+  --bg: var(--bino-background);
+  --sec: var(--bino-muted);
+  --line: var(--bino-border);
   --mag: var(--magenta);
   --magd: var(--magenta-press);
   --mag-l: rgba(255, 0, 102, 0.1);
@@ -17,20 +17,20 @@
   --news-moyen: #f5b700;
   --news-eleve: #f57c00;
   --news-critique: #dc0000;
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --shadow: 0 1px 2px rgba(0, 34, 68, 0.05);
-  --font-display: "Plus Jakarta Sans", sans-serif;
-  --font-body: "Nunito", sans-serif;
+  --space-1: var(--bino-space-1);
+  --space-2: var(--bino-space-2);
+  --space-3: var(--bino-space-3);
+  --space-4: var(--bino-space-4);
+  --space-5: var(--bino-space-5);
+  --space-6: var(--bino-space-6);
+  --space-8: var(--bino-space-8);
+  --radius-sm: var(--bino-radius-sm);
+  --radius-md: var(--bino-radius-md);
+  --radius-lg: var(--bino-radius-lg);
+  --radius-xl: var(--bino-radius-lg);
+  --shadow: var(--bino-shadow-soft);
+  --font-display: "Atkinson Hyperlegible", sans-serif;
+  --font-body: "Atkinson Hyperlegible", sans-serif;
 }
 * {
   box-sizing: border-box;
@@ -1402,15 +1402,28 @@ details.prev .cr-item:first-of-type {
 
 /* ---------- v6 : tout en blanc, épuré ---------- */
 :root {
-  --bg: #ffffff;
+  --bg: var(--bino-background);
 }
-body,
+body {
+  min-height: 100vh;
+  background: var(--bino-background);
+}
 .shell {
+  width: calc(100% - 16px);
+  max-width: 440px;
+  min-height: calc(100vh - 16px);
+  margin: 8px auto;
+  overflow: hidden;
   background: var(--white);
+  border: 1px solid rgba(27, 61, 110, 0.08);
+  border-radius: var(--bino-radius-lg);
+  box-shadow: var(--bino-shadow-card);
 }
 .card {
-  border: 1px solid rgba(0, 34, 68, 0.1);
-  box-shadow: none;
+  border: 1px solid var(--bino-border);
+  border-radius: var(--bino-radius-md);
+  background: var(--bino-surface);
+  box-shadow: var(--bino-shadow-soft);
   margin-bottom: 12px;
 }
 header.top {

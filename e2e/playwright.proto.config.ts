@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from '@playwright/test';
 
 /**
@@ -6,6 +7,9 @@ import { defineConfig } from '@playwright/test';
  */
 const API_PORT = 8789;
 const WEB_PORT = 8092;
+const AUDIO_FIXTURE = fileURLToPath(
+  new URL('../apps/api/src/fixtures/dictee.wav', import.meta.url),
+);
 
 export default defineConfig({
   testDir: './proto',
@@ -21,7 +25,11 @@ export default defineConfig({
     timezoneId: 'Europe/Paris',
     viewport: { width: 390, height: 844 },
     launchOptions: {
-      args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
+      args: [
+        '--use-fake-ui-for-media-stream',
+        '--use-fake-device-for-media-stream',
+        `--use-file-for-fake-audio-capture=${AUDIO_FIXTURE}`,
+      ],
     },
   },
   webServer: [
