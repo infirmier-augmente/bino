@@ -121,6 +121,11 @@ test('le dossier ne invente pas de constantes', async ({ page }, testInfo) => {
   await enterWard(page);
   await page.getByRole('button', { name: /Mme Bernard/ }).click();
   await expect(page.getByRole('heading', { name: 'Nouveau compte rendu' })).toBeVisible();
+  await page.getByRole('button', { name: 'Valider' }).click();
+  await expect(page.getByRole('alert')).toHaveText(
+    'Écris ou dicte le compte rendu avant de valider.',
+  );
+  await expect(page.locator('#draft')).toHaveAttribute('aria-invalid', 'true');
   await captureResponsive(page, testInfo.outputPath('design-new-report-mobile.png'), 390, true);
   await captureResponsive(page, testInfo.outputPath('design-new-report-desktop.png'), 1440, true);
   await page.setViewportSize({ width: 390, height: 844 });

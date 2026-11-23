@@ -29,7 +29,7 @@
   --radius-lg: var(--bino-radius-lg);
   --radius-xl: var(--bino-radius-lg);
   --shadow: var(--bino-shadow-soft);
-  --font-display: "Inter", sans-serif;
+  --font-display: "DM Sans", sans-serif;
   --font-body: "Open Sans", sans-serif;
 }
 * {

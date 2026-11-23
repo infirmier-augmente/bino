@@ -347,9 +347,22 @@ async function saveCr(): Promise<void> {
   const el = textField('draft');
   const text = (el ? el.value : U.draft).trim();
   if (!text) {
-    toast("Dicte ou écris d'abord le compte rendu.");
+    const zone = document.querySelector('.cr-zone');
+    let error = document.getElementById('draft-error');
+    if (!error && zone) {
+      error = document.createElement('p');
+      error.id = 'draft-error';
+      error.className = 'draft-error';
+      error.setAttribute('role', 'alert');
+      error.textContent = 'Écris ou dicte le compte rendu avant de valider.';
+      zone.append(error);
+    }
+    el?.setAttribute('aria-invalid', 'true');
+    el?.focus();
     return;
   }
+  document.getElementById('draft-error')?.remove();
+  el?.removeAttribute('aria-invalid');
   const pid = U.pid;
   if (!pid) return;
   U.saving = true;
