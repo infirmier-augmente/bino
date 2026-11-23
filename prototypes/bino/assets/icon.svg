@@ -1,10 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="16" fill="#FF0066"/>
-  <circle cx="14" cy="34" r="7" fill="#5BB8F0"/>
-  <circle cx="50" cy="34" r="7" fill="#5BB8F0"/>
-  <rect x="16" y="12" width="32" height="40" rx="16" fill="#fff"/>
-  <ellipse cx="26" cy="30" rx="3.4" ry="4.8" fill="#002244"/>
-  <ellipse cx="38" cy="30" rx="3.4" ry="4.8" fill="#002244"/>
-  <circle cx="27.1" cy="28.4" r="1" fill="#fff"/>
-  <circle cx="39.1" cy="28.4" r="1" fill="#fff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 136 139">
+  <image href="brand/app-icon-selected.png" width="136" height="139"/>
 </svg>

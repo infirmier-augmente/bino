@@ -11,7 +11,9 @@ Le détail de chaque écran, des règles (priorités, NEWS2, zéro information i
 ## Aperçu du design
 
 Direction approuvée : fond bleu pâle, surfaces blanches, titres navy, actions rose vif et mascotte Bino.
-Le logo d’application est l’image sélectionnée du produit, distincte de la mascotte.
+Le logo officiel remplace l’ancien dans les assets et l’application. L’extérieur bleu-violet est transparent ; le carré rose et Bino restent ceux de l’image fournie.
+
+![Logo officiel Bino](assets/brand/app-icon-selected.png)
 
 ![Planche complète des écrans Bino](assets/design/bino-final-mockup-board.png)
 
