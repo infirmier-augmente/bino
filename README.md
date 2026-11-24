@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/bino/logo-icon.png" alt="Logo Bino" width="96">
+  <img src="prototypes/bino/assets/brand/bino-logo.svg" alt="Logo Bino" width="96">
 </p>
 
 <p align="center">Rendre à Martine, infirmière, le temps que l'administratif lui prend pour le rendre au patient.</p>
