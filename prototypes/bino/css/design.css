@@ -1,0 +1,208 @@
+/* Direction approuvée du kit Bino : surfaces froides, navy, rose et angles doux. */
+body {
+  color: var(--bino-text);
+  background: var(--bino-background);
+}
+
+.shell {
+  background: var(--bino-surface);
+  border-color: rgba(27, 61, 110, 0.08);
+  border-radius: var(--bino-radius-lg);
+  box-shadow: var(--bino-shadow-card);
+}
+
+.card {
+  border-color: var(--bino-border);
+  border-radius: var(--bino-radius-md);
+  background: var(--bino-surface);
+  box-shadow: var(--bino-shadow-soft);
+}
+
+header.top {
+  background: var(--bino-surface);
+}
+
+.hello-mascot {
+  object-fit: contain;
+}
+
+.hello-t,
+.list-t,
+.tr-title,
+.pp-title,
+.pp-name,
+.done-t {
+  color: var(--bino-navy);
+}
+
+.hello-d,
+.list-ward,
+.pp-sub,
+.done-status {
+  color: var(--bino-muted);
+}
+
+.count {
+  background: var(--bino-pink);
+}
+
+.btn {
+  border-radius: var(--bino-radius-md);
+  background: var(--bino-pink);
+}
+
+.btn:hover {
+  background: var(--bino-pink-dark);
+}
+
+.btn:focus-visible,
+.icon-btn:focus-visible,
+.hello-out:focus-visible,
+.password-toggle:focus-visible,
+.mic:focus-visible,
+.lvl:focus-visible,
+.lvl-n:focus-visible,
+.seg-b:focus-visible,
+.prow-open:focus-visible,
+nav.tabs button:focus-visible,
+.pill:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(255, 0, 104, 0.42);
+  outline-offset: 2px;
+}
+
+.login {
+  padding: 24px 20px 40px;
+  background: radial-gradient(circle at 0 0, #e1ecff 0 145px, transparent 146px);
+}
+
+.login-mark {
+  height: 164px;
+  max-width: 100%;
+  margin-bottom: 4px;
+}
+
+.login-card {
+  padding: 18px;
+  border-radius: 22px;
+}
+
+.login-card .f,
+.password-field .f {
+  min-height: 42px;
+  border-color: #c6d5e9;
+  border-radius: 12px;
+  background: var(--bino-surface);
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field .f {
+  width: 100%;
+  padding-right: 52px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 10px;
+  color: var(--bino-muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  color: var(--bino-navy);
+  background: var(--bino-blue-soft);
+}
+
+.login-hint {
+  margin-top: 18px;
+}
+
+.list-head {
+  margin-top: 10px;
+  margin-bottom: 14px;
+}
+
+.list-t {
+  font-size: 21px;
+}
+
+.prow {
+  min-height: 72px;
+  padding-block: 0;
+  border-radius: var(--bino-radius-md);
+  border-left: 4px solid var(--bino-blue);
+}
+
+.prow-open {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.room-chip {
+  border-color: var(--bino-blue);
+  background: var(--bino-blue-soft);
+}
+
+.tr-title {
+  font-size: 28px;
+}
+
+.seg {
+  border-radius: 14px;
+  border-color: var(--bino-pink);
+  box-shadow: var(--bino-shadow-soft);
+}
+
+.seg-b {
+  color: var(--bino-pink-dark);
+}
+
+.seg-b.on {
+  background: var(--bino-pink);
+  color: #fff;
+}
+
+.tr-q,
+.sort-menu > summary {
+  border-color: var(--bino-border);
+  border-radius: 12px;
+  background: var(--bino-surface);
+  box-shadow: var(--bino-shadow-soft);
+}
+
+.sum,
+.cr-list {
+  border-radius: var(--bino-radius-md);
+  box-shadow: var(--bino-shadow-soft);
+}
+
+.cr-item + .cr-item {
+  border-color: var(--bino-border);
+}
+
+.sheet {
+  background: var(--bino-background);
+}
+
+.sheet-wrap.full .sheet {
+  background: var(--bino-surface);
+}
+
+.pp {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}

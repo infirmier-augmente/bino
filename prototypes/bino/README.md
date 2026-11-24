@@ -8,6 +8,17 @@ Le détail de chaque écran, des règles (priorités, NEWS2, zéro information i
 
 > **Données entièrement fictives.** Ne jamais saisir de données réelles de patients : la démo n'est ni hébergée HDS ni conforme RGPD pour des données de santé.
 
+## Aperçu du design
+
+Direction approuvée : fond bleu pâle, surfaces blanches, titres navy, actions rose vif et mascotte Bino.
+Le logo officiel remplace l’ancien dans les assets et l’application. L’extérieur bleu-violet est transparent ; le carré rose et Bino restent ceux de l’image fournie.
+
+![Logo officiel Bino](assets/brand/app-icon-selected.png)
+
+![Planche complète des écrans Bino](assets/design/bino-final-mockup-board.png)
+
+Captures de référence : [connexion](assets/design/screens/01-login.png) · [patients](assets/design/screens/02-patients.png) · [transmissions](assets/design/screens/03-transmissions.png) · [nouveau compte rendu](assets/design/screens/04-new-report.png) · [confirmation](assets/design/screens/05-confirm-transmission.png) · [succès](assets/design/screens/06-transmission-success.png).
+
 ---
 
 ## Tester en 30 secondes
@@ -77,14 +88,21 @@ Dans Claude, pour que l'équipe puisse écrire, partagez le lien en **Contribute
 
 ## Lancer en local
 
-Il faut un petit serveur web (les modules JavaScript ne marchent pas en ouvrant le fichier directement).
+Depuis la racine du dépôt, démarre l'API et le site dans deux terminaux. Le site sert les assets
+statiques et transmet ses appels à l'API locale ; ouvrir `index.html` directement ne suffit pas.
 
 ```bash
-cd prototypes/bino
-npm start                    # http://localhost:8080
-# ou, sans Node :
-python3 -m http.server 8080
+pnpm install
+pnpm dev:api                  # terminal 1 · API sur http://localhost:8787
 ```
+
+Dans un second terminal, toujours depuis la racine :
+
+```bash
+pnpm dev:web                  # terminal 2 · site sur http://localhost:8080
+```
+
+Ouvre <http://localhost:8080>. Pour arrêter les serveurs, fais `Ctrl+C` dans chaque terminal.
 
 Pour tester sur un téléphone du même Wi-Fi : `http://<IP-de-votre-ordinateur>:8080`. La dictée vocale du navigateur demande HTTPS : utilisez plutôt le lien de démo.
 
@@ -105,20 +123,23 @@ npm test
 
 ## Architecture
 
-Aucune étape de build : HTML, CSS et modules JavaScript natifs.
+Le prototype garde une page HTML et des modules TypeScript compilés en JavaScript natif, sans framework.
 
 ```
-index.html               page unique, barre d'onglets
-css/styles.css           identité visuelle Bino (Plus Jakarta Sans, Nunito, magenta, bleu ciel, bleu nuit)
-js/app.js                état, actions, feuilles (constantes, réglages)
-js/views.js              rendu : en-tête, Patients, popup patient, Transmissions
-js/store.js              comptes rendus reçus de l'API
-js/document.js           document de transmission (vue, texte à copier, fichier HTML)
-js/triage.js             niveaux de priorité affichés
-js/news2.js              calcul NEWS2 (échelle SpO2 n°1)
-js/data.js               comptes de démo et exemples de dictée
-js/services/voice.js     dictée : Apple sur iPhone, enregistrement vers l'API sur ordinateur
-tests/                   tests Node du score NEWS2 (node --test)
+index.html               page unique et barre d'onglets
+src/app.ts               état et actions de l'interface
+src/views.ts             rendu des écrans et modales
+src/store.ts             comptes rendus reçus de l'API
+src/document.ts          document de transmission
+src/triage.ts            niveaux de priorité affichés
+src/news2.ts             calcul NEWS2 (échelle SpO2 n°1)
+src/data.ts              comptes de démo et exemples de dictée
+src/services/voice.ts    dictée et enregistrement
+css/tokens.css           variables de style
+css/styles.css           styles de base
+css/design.css           identité visuelle et composants
+css/design-flows.css     écrans spécialisés et responsive
+tests/                   tests Node du score NEWS2
 ```
 
 Les fiches viennent de l'API. Le navigateur ne classe pas les phrases lui-même.

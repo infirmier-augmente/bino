@@ -461,9 +461,9 @@ export async function setLevel(
   });
 }
 
-export async function reviewMine(crs: Cr[], matricule: string): Promise<void> {
+export async function reviewMine(crs: Cr[], matricule: string): Promise<number> {
   const nurse = nurseForMatricule(matricule);
-  if (!nurse) return;
+  if (!nurse) return 0;
   const mine = crs.filter((c) => !c.pending && c.nurseId === nurse.id && c.review === 'draft');
   for (const c of mine) {
     await call(`/transmissions/${c.id}/review`, {
@@ -471,4 +471,5 @@ export async function reviewMine(crs: Cr[], matricule: string): Promise<void> {
       body: { nurseId: nurse.id, decision: 'validate' },
     });
   }
+  return mine.length;
 }

@@ -4,13 +4,13 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#F3F3F3",
-  "theme_color": "#FF0066",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FF0068",
   "lang": "fr",
   "icons": [
     {
-      "src": "assets/bino/salue-bust.png",
-      "sizes": "282x278",
+      "src": "assets/brand/app-icon-selected.png",
+      "sizes": "136x139",
       "type": "image/png",
       "purpose": "any"
     }

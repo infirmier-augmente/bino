@@ -26,6 +26,7 @@ import {
   vPatientPopup,
   vPatients,
   vShiftAsk,
+  vShiftSuccess,
   vTransmissions,
 } from './views.js';
 
@@ -56,6 +57,7 @@ const U: Ui = {
   justIn: false,
 };
 let docModel: DocModel | null = null;
+let shiftSaving = false;
 const P = (id: string): Patient | undefined => S.patients.find((p) => p.id === id);
 const signedIn = (): boolean => !!settings.matricule;
 
@@ -73,6 +75,14 @@ function control(id: string): HTMLInputElement | HTMLTextAreaElement | HTMLSelec
   )
     return found;
   return null;
+}
+function appScroller(): HTMLElement | null {
+  const app = document.getElementById('app');
+  return app?.parentElement instanceof HTMLElement ? app.parentElement : null;
+}
+function scrollAppTo(top: number): void {
+  const scroller = appScroller();
+  if (scroller) scroller.scrollTop = top;
 }
 function textField(id: string): HTMLInputElement | HTMLTextAreaElement | null {
   const found = control(id);
@@ -103,6 +113,7 @@ function markView(name: string): void {
   const app = document.getElementById('app');
   if (!app || shownView === name) return;
   shownView = name;
+  scrollAppTo(0);
   app.classList.remove('view-in');
   void app.offsetWidth;
   app.classList.add('view-in');
@@ -172,7 +183,7 @@ function keepListPlace(): void {
   const y = listScroll;
   const token = ++scrollToken;
   const apply = () => {
-    if (token === scrollToken) window.scrollTo(0, y);
+    if (token === scrollToken) scrollAppTo(y);
   };
   apply();
   requestAnimationFrame(apply);
@@ -197,6 +208,9 @@ function closePatient(): void {
 }
 
 let doneTimer: ReturnType<typeof setTimeout> | undefined;
+const DONE_MASCOT: Readonly<Record<string, string>> = {
+  content: 'assets/mascot/mascot-report-encouraging.png',
+};
 function hideDone(): void {
   clearTimeout(doneTimer);
   const el = document.getElementById('done');
@@ -210,7 +224,8 @@ function setDoneStatus(status: string, mood?: string): void {
   const el = document.getElementById('save-status');
   if (el) el.textContent = status;
   const face = document.getElementById('done-bino');
-  if (face instanceof HTMLImageElement && mood) face.src = `assets/bino/${mood}-bust.png`;
+  const mascot = mood ? DONE_MASCOT[mood] : undefined;
+  if (face instanceof HTMLImageElement && mascot) face.src = mascot;
 }
 function scheduleDoneClose(ms: number): void {
   clearTimeout(doneTimer);
@@ -341,9 +356,22 @@ async function saveCr(): Promise<void> {
   const el = textField('draft');
   const text = (el ? el.value : U.draft).trim();
   if (!text) {
-    toast("Dicte ou écris d'abord le compte rendu.");
+    const zone = document.querySelector('.cr-zone');
+    let error = document.getElementById('draft-error');
+    if (!error && zone) {
+      error = document.createElement('p');
+      error.id = 'draft-error';
+      error.className = 'draft-error';
+      error.setAttribute('role', 'alert');
+      error.textContent = 'Écris ou dicte le compte rendu avant de valider.';
+      zone.append(error);
+    }
+    el?.setAttribute('aria-invalid', 'true');
+    el?.focus();
     return;
   }
+  document.getElementById('draft-error')?.remove();
+  el?.removeAttribute('aria-invalid');
   const pid = U.pid;
   if (!pid) return;
   U.saving = true;
@@ -511,14 +539,14 @@ function refreshMic(): void {
 /* ---------- actions ---------- */
 let tt: ReturnType<typeof setTimeout> | undefined;
 const TOAST_FACE = {
-  content: 'content-head',
-  alerte: 'alerte-head',
-  neutre: 'clin-oeil-head',
+  content: 'mascot-report-encouraging.png',
+  alerte: 'mascot-surprised.png',
+  neutre: 'mascot-login-wink.png',
 } as const;
 function toast(m: string, mood: keyof typeof TOAST_FACE = 'neutre'): void {
   const t = must('toast');
   const face = TOAST_FACE[mood];
-  t.innerHTML = `<div class="toast"><img class="toast-bino" src="assets/bino/${face}.png" alt="">${esc(m)}</div>`;
+  t.innerHTML = `<div class="toast"><img class="toast-bino" src="assets/mascot/${face}" alt="">${esc(m)}</div>`;
   clearTimeout(tt);
   tt = setTimeout(() => {
     t.innerHTML = '';
@@ -553,11 +581,35 @@ const A: Record<string, Act> = {
       pwEl?.focus();
       return;
     }
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     saveSettings({ matricule: staff.matricule, name: staff.name });
     U.loginError = '';
     U.loginId = '';
     U.justIn = true;
     render();
+    const resetScroll = () => {
+      scrollAppTo(0);
+      window.scrollTo(0, 0);
+    };
+    resetScroll();
+    requestAnimationFrame(resetScroll);
+    window.setTimeout(() => {
+      if (U.justIn) resetScroll();
+    }, 300);
+  },
+  togglePassword: () => {
+    const password = document.getElementById('login-pw');
+    const toggle = document.querySelector('[data-act="togglePassword"]');
+    if (!(password instanceof HTMLInputElement) || !(toggle instanceof HTMLButtonElement)) return;
+    const visible = password.type === 'password';
+    password.type = visible ? 'text' : 'password';
+    toggle.setAttribute(
+      'aria-label',
+      visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe',
+    );
+    toggle.setAttribute('aria-pressed', String(visible));
+    toggle.innerHTML = ic(visible ? 'eyeOff' : 'eye', 20);
+    password.focus({ preventScroll: true });
   },
   enter: () => {
     U.justIn = false;
@@ -565,6 +617,7 @@ const A: Record<string, Act> = {
     Store.refresh().catch(() => {});
   },
   logout: () => {
+    shiftSaving = false;
     if (U.listening) Voice.stop();
     U.listening = null;
     U.capture = null;
@@ -583,19 +636,19 @@ const A: Record<string, Act> = {
     hideDone();
     U.tab = a;
     render();
-    window.scrollTo(0, 0);
+    scrollAppTo(0);
   },
   seeTransmissions: () => {
     hideDone();
     U.tab = 'transmissions';
     U.trScope = 'mine';
     render();
-    window.scrollTo(0, 0);
+    scrollAppTo(0);
   },
   openPatient: (a) => {
     if (!a) return;
     hideDone();
-    listScroll = window.scrollY;
+    listScroll = appScroller()?.scrollTop ?? 0;
     U.pid = a;
     U.draft = '';
     U.foldOpen = false;
@@ -634,21 +687,46 @@ const A: Record<string, Act> = {
   },
   saveCr: () => saveCr(),
   askShift: () => {
+    shiftSaving = false;
     must('done').innerHTML = vShiftAsk();
   },
   cancelShift: (_a, el, e) => {
+    if (shiftSaving) return;
     if (!el || !e) return;
     if (el.classList.contains('done-wrap') && e.target !== el) return;
     must('done').innerHTML = '';
   },
   confirmShift: async () => {
-    must('done').innerHTML = '';
-    try {
-      await Store.reviewMine();
-      toast('Transmission validée.', 'content');
-    } catch {
-      toast('Validation impossible pour le moment.', 'alerte');
+    if (shiftSaving) return;
+    shiftSaving = true;
+    const dialog = must('done').querySelector<HTMLElement>('.shift-ask');
+    if (dialog) {
+      dialog.setAttribute('aria-busy', 'true');
+      for (const button of dialog.querySelectorAll<HTMLButtonElement>('button')) {
+        button.disabled = true;
+      }
+      const confirm = dialog.querySelector<HTMLButtonElement>('[data-act="confirmShift"]');
+      if (confirm) confirm.innerHTML = '<span class="spin"></span> Validation…';
     }
+    try {
+      const reviewed = await Store.reviewMine();
+      if (!reviewed) {
+        shiftSaving = false;
+        must('done').innerHTML = vShiftAsk(false, 'Aucun compte rendu en attente de validation.');
+        return;
+      }
+      shiftSaving = false;
+      must('done').innerHTML = vShiftSuccess();
+      document.querySelector<HTMLButtonElement>('[data-act="closeShiftSuccess"]')?.focus({
+        preventScroll: true,
+      });
+    } catch {
+      shiftSaving = false;
+      must('done').innerHTML = vShiftAsk(false, 'Validation impossible pour le moment.');
+    }
+  },
+  closeShiftSuccess: () => {
+    must('done').innerHTML = '';
   },
 
   trScope: (a) => {
@@ -774,8 +852,9 @@ document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   const done = document.getElementById('done');
   const sheetEl = document.getElementById('sheet');
-  if (done?.innerHTML) done.innerHTML = '';
-  else if (document.querySelector('details.menu[open]')) {
+  if (done?.innerHTML) {
+    if (!shiftSaving) done.innerHTML = '';
+  } else if (document.querySelector('details.menu[open]')) {
     for (const d of document.querySelectorAll('details.menu[open]')) {
       if (d instanceof HTMLDetailsElement) d.open = false;
     }
@@ -795,6 +874,7 @@ Store.onChange(() => {
   softRender();
 });
 render();
+window.addEventListener('pageshow', () => scrollAppTo(0));
 Voice.init().then(softRender);
 Store.init().then(() => {
   softRender();
