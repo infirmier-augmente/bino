@@ -18,6 +18,8 @@
 
 Matricule `10482`, mot de passe `bino`. Patients fictifs.
 
+Captures réelles de l’application sur mobile :
+
 <table>
   <tr>
     <td align="center" width="25%"><img src="docs/images/connexion.png" alt="Connexion" width="180"><br><sub>Connexion</sub></td>

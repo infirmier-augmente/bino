@@ -123,20 +123,23 @@ npm test
 
 ## Architecture
 
-Aucune étape de build : HTML, CSS et modules JavaScript natifs.
+Le prototype garde une page HTML et des modules TypeScript compilés en JavaScript natif, sans framework.
 
 ```
-index.html               page unique, barre d'onglets
-css/styles.css           identité visuelle Bino (Plus Jakarta Sans, Nunito, magenta, bleu ciel, bleu nuit)
-js/app.js                état, actions, feuilles (constantes, réglages)
-js/views.js              rendu : en-tête, Patients, popup patient, Transmissions
-js/store.js              comptes rendus reçus de l'API
-js/document.js           document de transmission (vue, texte à copier, fichier HTML)
-js/triage.js             niveaux de priorité affichés
-js/news2.js              calcul NEWS2 (échelle SpO2 n°1)
-js/data.js               comptes de démo et exemples de dictée
-js/services/voice.js     dictée : Apple sur iPhone, enregistrement vers l'API sur ordinateur
-tests/                   tests Node du score NEWS2 (node --test)
+index.html               page unique et barre d'onglets
+src/app.ts               état et actions de l'interface
+src/views.ts             rendu des écrans et modales
+src/store.ts             comptes rendus reçus de l'API
+src/document.ts          document de transmission
+src/triage.ts            niveaux de priorité affichés
+src/news2.ts             calcul NEWS2 (échelle SpO2 n°1)
+src/data.ts              comptes de démo et exemples de dictée
+src/services/voice.ts    dictée et enregistrement
+css/tokens.css           variables de style
+css/styles.css           styles de base
+css/design.css           identité visuelle et composants
+css/design-flows.css     écrans spécialisés et responsive
+tests/                   tests Node du score NEWS2
 ```
 
 Les fiches viennent de l'API. Le navigateur ne classe pas les phrases lui-même.
