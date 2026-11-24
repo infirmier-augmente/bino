@@ -76,6 +76,14 @@ function control(id: string): HTMLInputElement | HTMLTextAreaElement | HTMLSelec
     return found;
   return null;
 }
+function appScroller(): HTMLElement | null {
+  const app = document.getElementById('app');
+  return app?.parentElement instanceof HTMLElement ? app.parentElement : null;
+}
+function scrollAppTo(top: number): void {
+  const scroller = appScroller();
+  if (scroller) scroller.scrollTop = top;
+}
 function textField(id: string): HTMLInputElement | HTMLTextAreaElement | null {
   const found = control(id);
   if (found instanceof HTMLInputElement || found instanceof HTMLTextAreaElement) return found;
@@ -105,6 +113,7 @@ function markView(name: string): void {
   const app = document.getElementById('app');
   if (!app || shownView === name) return;
   shownView = name;
+  scrollAppTo(0);
   app.classList.remove('view-in');
   void app.offsetWidth;
   app.classList.add('view-in');
@@ -174,7 +183,7 @@ function keepListPlace(): void {
   const y = listScroll;
   const token = ++scrollToken;
   const apply = () => {
-    if (token === scrollToken) window.scrollTo(0, y);
+    if (token === scrollToken) scrollAppTo(y);
   };
   apply();
   requestAnimationFrame(apply);
@@ -572,11 +581,21 @@ const A: Record<string, Act> = {
       pwEl?.focus();
       return;
     }
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     saveSettings({ matricule: staff.matricule, name: staff.name });
     U.loginError = '';
     U.loginId = '';
     U.justIn = true;
     render();
+    const resetScroll = () => {
+      scrollAppTo(0);
+      window.scrollTo(0, 0);
+    };
+    resetScroll();
+    requestAnimationFrame(resetScroll);
+    window.setTimeout(() => {
+      if (U.justIn) resetScroll();
+    }, 300);
   },
   togglePassword: () => {
     const password = document.getElementById('login-pw');
@@ -617,19 +636,19 @@ const A: Record<string, Act> = {
     hideDone();
     U.tab = a;
     render();
-    window.scrollTo(0, 0);
+    scrollAppTo(0);
   },
   seeTransmissions: () => {
     hideDone();
     U.tab = 'transmissions';
     U.trScope = 'mine';
     render();
-    window.scrollTo(0, 0);
+    scrollAppTo(0);
   },
   openPatient: (a) => {
     if (!a) return;
     hideDone();
-    listScroll = window.scrollY;
+    listScroll = appScroller()?.scrollTop ?? 0;
     U.pid = a;
     U.draft = '';
     U.foldOpen = false;
@@ -680,7 +699,15 @@ const A: Record<string, Act> = {
   confirmShift: async () => {
     if (shiftSaving) return;
     shiftSaving = true;
-    must('done').innerHTML = vShiftAsk(true);
+    const dialog = must('done').querySelector<HTMLElement>('.shift-ask');
+    if (dialog) {
+      dialog.setAttribute('aria-busy', 'true');
+      for (const button of dialog.querySelectorAll<HTMLButtonElement>('button')) {
+        button.disabled = true;
+      }
+      const confirm = dialog.querySelector<HTMLButtonElement>('[data-act="confirmShift"]');
+      if (confirm) confirm.innerHTML = '<span class="spin"></span> Validation…';
+    }
     try {
       const reviewed = await Store.reviewMine();
       if (!reviewed) {
@@ -847,6 +874,7 @@ Store.onChange(() => {
   softRender();
 });
 render();
+window.addEventListener('pageshow', () => scrollAppTo(0));
 Voice.init().then(softRender);
 Store.init().then(() => {
   softRender();

@@ -240,7 +240,7 @@ export function vPatientPopup(S: Ward, U: Ui, examples: Example[]): string {
   <h1 class="pp-title">Nouveau compte rendu</h1>
   <div class="pp-name">${esc(p.nom)}</div>
   <div class="pp-sub">Chambre ${esc(p.ch)} · ${p.age} ans</div>
-  <img class="pp-mascot" src="assets/mascot/mascot-login-hero.png" width="338" height="270" alt="">
+  <img class="pp-mascot" src="assets/mascot/mascot-tip-speaking.png" width="1254" height="1254" alt="">
   <p class="pp-steps"><span><i>« Dicte ou écris, puis valide. Tu retrouveras ton compte-rendu soigneusement rangé dans <b>Mes CR</b>. »</i></span></p>
 
   <div class="pp-actions">
@@ -269,10 +269,9 @@ export function vPatientPopup(S: Ward, U: Ui, examples: Example[]): string {
     <label class="sr" for="draft">Compte rendu</label>
     <textarea id="draft" class="draft cr-box" data-model="draft" placeholder="Ce que tu as vu et fait, comme à la relève.">${esc(U.draft)}</textarea>
     <div class="live" id="live" aria-live="polite"></div>
-    <div class="pp-mic">${micBtn(U, 'draft')}</div>
     ${ex ? `<div class="pp-ex"><button type="button" class="chip ex" data-act="useEx" data-arg="${examples.indexOf(ex)}">${ic('play', 14)} Exemple : ${esc(ex.label)}</button></div>` : ''}
   </div>
-  <div class="pp-foot"><button type="button" class="btn valider" data-act="saveCr" ${U.saving ? 'disabled' : ''}>${U.saving ? '<span class="spin"></span>' : ''} Valider</button></div>
+  <div class="pp-foot"><div class="pp-mic">${micBtn(U, 'draft')}</div><button type="button" class="btn valider" data-act="saveCr" ${U.saving ? 'disabled' : ''}>${U.saving ? '<span class="spin"></span>' : ''} Valider</button></div>
   </div>`;
 }
 

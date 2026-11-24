@@ -2,11 +2,25 @@
 
 .pp-mascot {
   display: block;
-  width: min(220px, 75%);
-  height: 140px;
-  margin: 0 auto -16px;
+  width: min(180px, 64%);
+  height: 160px;
+  margin: 0 0 -16px auto;
   object-fit: contain;
   object-position: center bottom;
+}
+
+.sheet-wrap.full {
+  align-items: stretch;
+  padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom));
+  background: var(--bino-background);
+}
+
+.sheet-wrap.full .sheet {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  border-radius: var(--bino-radius-lg);
+  box-shadow: var(--bino-shadow-card);
 }
 
 .pp-steps {
@@ -17,9 +31,10 @@
   margin: 0 0 12px;
   padding: 12px 16px;
   border: 1px solid var(--bino-border);
-  border-radius: 18px 18px 18px 4px;
+  border-radius: 22px;
   background: var(--bino-surface);
   box-shadow: var(--bino-shadow-soft);
+  flex: none;
 }
 
 .pp-steps span {
@@ -33,6 +48,7 @@
 
 .pp-actions {
   margin: 10px 0 12px;
+  flex: none;
 }
 
 .pill {
@@ -48,16 +64,45 @@
 }
 
 .dossier-body {
+  padding: 12px 16px;
   border-radius: var(--bino-radius-md);
 }
 
+.info {
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.info span {
+  flex: 0 1 40%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.info b {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .cr-zone {
+  flex: 1 0 300px;
+  min-height: 300px;
   margin-top: 12px;
   padding: 12px;
   border: 1px solid var(--bino-border);
   border-radius: 22px;
   background: var(--bino-surface);
   box-shadow: var(--bino-shadow-soft);
+  justify-content: flex-start;
+}
+
+.pp-title,
+.pp-name,
+.pp-sub,
+.pp-mascot,
+.pp-foot {
+  flex: none;
 }
 
 .draft-error {
@@ -215,8 +260,15 @@ nav.tabs button.on {
 @media (min-width: 600px) {
   .shell {
     width: min(calc(100% - 40px), 440px);
-    min-height: calc(100vh - 40px);
+    height: calc(100vh - 40px);
+    min-height: 0;
     margin: 20px auto;
+  }
+
+  @supports (height: 100dvh) {
+    .shell {
+      height: calc(100dvh - 40px);
+    }
   }
 
   nav.tabs {
@@ -227,12 +279,25 @@ nav.tabs button.on {
 
 @media (max-height: 700px) {
   .login {
-    justify-content: flex-start;
-    padding-top: 16px;
+    justify-content: center;
+    padding: 12px 16px;
   }
 
   .login-mark {
-    height: 112px;
+    height: clamp(76px, 16dvh, 112px);
+    flex: none;
+  }
+
+  .login h1 {
+    margin-top: 8px;
+  }
+
+  .login-card {
+    padding: 14px;
+  }
+
+  .login-hint {
+    margin-top: 10px;
   }
 
   .pp-mascot {

@@ -75,10 +75,11 @@ select:focus-visible {
 
 .login {
   padding: 24px 20px 40px;
+  background: radial-gradient(circle at 0 0, #e1ecff 0 145px, transparent 146px);
 }
 
 .login-mark {
-  height: 146px;
+  height: 164px;
   max-width: 100%;
   margin-bottom: 4px;
 }
@@ -90,7 +91,7 @@ select:focus-visible {
 
 .login-card .f,
 .password-field .f {
-  min-height: 46px;
+  min-height: 42px;
   border-color: #c6d5e9;
   border-radius: 12px;
   background: var(--bino-surface);
@@ -140,7 +141,8 @@ select:focus-visible {
 }
 
 .prow {
-  min-height: 82px;
+  min-height: 78px;
+  padding-block: 11px;
   border-radius: var(--bino-radius-md);
   border-left: 4px solid var(--bino-blue);
 }
