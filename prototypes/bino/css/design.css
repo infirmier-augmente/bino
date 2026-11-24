@@ -141,15 +141,15 @@ select:focus-visible {
 }
 
 .prow {
-  min-height: 78px;
-  padding-block: 11px;
+  min-height: 72px;
+  padding-block: 0;
   border-radius: var(--bino-radius-md);
   border-left: 4px solid var(--bino-blue);
 }
 
 .prow-open {
-  padding-top: 14px;
-  padding-bottom: 14px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .room-chip {

@@ -179,6 +179,23 @@ test('la liste est le service de réa, sans le service de chirurgie', async ({ p
   await captureResponsive(page, testInfo.outputPath('design-patients-mobile.png'), 390, true);
   await captureResponsive(page, testInfo.outputPath('design-patients-desktop.png'), 1440, true);
   await page.setViewportSize({ width: 390, height: 844 });
+  const firstPatient = await page
+    .locator('.prow')
+    .first()
+    .evaluate((card) => {
+      const content = card.querySelector('.prow-open');
+      if (!content) throw new Error('Contenu de la carte patient absent');
+      const rect = card.getBoundingClientRect();
+      const style = getComputedStyle(content);
+      return {
+        height: rect.height,
+        paddingTop: style.paddingTop,
+        paddingBottom: style.paddingBottom,
+      };
+    });
+  expect(firstPatient.height).toBeLessThanOrEqual(84);
+  expect(firstPatient.paddingTop).toBe('10px');
+  expect(firstPatient.paddingBottom).toBe('10px');
   for (const name of SURGERY) await expect(page.getByText(name)).toHaveCount(0);
 });
 
