@@ -43,6 +43,9 @@ async function captureResponsive(page: Page, path: string, width: number, fullPa
         x: rect?.x ?? 0,
         y: rect?.y ?? 0,
         width: rect?.width ?? 0,
+        centerOffset: rect
+          ? Math.abs(rect.y + rect.height / 2 - window.innerHeight / 2)
+          : Number.POSITIVE_INFINITY,
         radius: element ? Number.parseFloat(getComputedStyle(element).borderTopLeftRadius) : 0,
       };
     })(),
@@ -50,6 +53,7 @@ async function captureResponsive(page: Page, path: string, width: number, fullPa
   expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
   expect(dimensions.contentHeight).toBeLessThanOrEqual(dimensions.viewportHeight);
   expect(dimensions.scrollY).toBe(0);
+  expect(dimensions.shell.centerOffset).toBeLessThan(1);
   if (width > 600) expect(dimensions.shell.width).toBeLessThanOrEqual(440);
   else {
     expect(dimensions.shell.x).toBeGreaterThanOrEqual(8);
@@ -94,6 +98,16 @@ test('la page ne défile pas verticalement sur petit écran', async ({ page }, t
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(300);
   await page.screenshot({ path: testInfo.outputPath('design-login-success-mobile.png') });
+  const shell = page.locator('.shell');
+  const centeredY = async () =>
+    shell.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2);
+    });
+  await expect.poll(centeredY).toBeLessThan(1);
+  await page.evaluate(() => window.scrollTo({ top: 500, behavior: 'instant' }));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  await expect.poll(centeredY).toBeLessThan(1);
 });
 
 test('connexion et accueil restent centrés quand la hauteur visible est courte', async ({

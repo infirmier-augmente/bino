@@ -39,7 +39,8 @@ html {
   height: 100%;
   max-width: 100%;
   overflow-x: clip;
-  overscroll-behavior-x: none;
+  overflow-y: hidden;
+  overscroll-behavior: none;
 }
 body {
   height: 100%;
@@ -103,9 +104,9 @@ label,
 .shell {
   width: calc(100% - 16px);
   max-width: 440px;
-  height: calc(100vh - 36px);
+  height: calc(100vh - 56px);
   min-height: 0;
-  margin: 28px auto 8px;
+  margin: 28px auto;
   overflow: hidden;
   background: var(--white);
   border: 1px solid rgba(27, 61, 110, 0.08);
@@ -120,10 +121,10 @@ label,
     height: calc(
       100dvh -
       max(28px, calc(env(safe-area-inset-top) + 12px)) -
-      max(8px, env(safe-area-inset-bottom))
+      max(28px, calc(env(safe-area-inset-bottom) + 12px))
     );
     margin-top: max(28px, calc(env(safe-area-inset-top) + 12px));
-    margin-bottom: max(8px, env(safe-area-inset-bottom));
+    margin-bottom: max(28px, calc(env(safe-area-inset-bottom) + 12px));
   }
 }
 header.top {
@@ -1377,7 +1378,6 @@ details.prev .cr-item:first-of-type {
   --bg: var(--bino-background);
 }
 body {
-  min-height: 100vh;
   background: var(--bino-background);
 }
 .card {
